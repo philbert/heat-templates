@@ -126,7 +126,7 @@
 				"m1.xlarge", 
 				"m1.2xlarge" 
 			], 
-			"Default": "m1.tiny", 
+			"Default": "m1.small", 
 			"Description": "EC2 instance type (e.g. m1.large, m1.xlarge, m2.xlarge)", 
 			"Type": "String"
 		}, 
