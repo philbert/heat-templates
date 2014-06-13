@@ -1,55 +1,35 @@
 {
-	"AWSTemplateFormatVersion": "2010-09-09", 
-	"Description": "ElasticSearch Master Cluster", 
-	"Mappings": {
-		"AWSInstanceType2Arch": {
-			"m1.large": {
-				"Arch": "64"
-			}, 
-			"m1.medium": {
-				"Arch": "64"
-			}, 
-			"m1.small": {
-				"Arch": "64"
-			}, 
-			"m1.tiny": {
-				"Arch": "64"
-			}, 
-			"m1.xlarge": {
-				"Arch": "64"
-			}
-		}, 
-		"DistroArch2AMI": {
-			"F17": {
-				"32": "F17-i386-cfntools", 
-				"64": "F17-x86_64-cfntools"
-			}, 
-			"F18": {
-				"32": "F18-i386-cfntools", 
-				"64": "F18-x86_64-cfntools"
-			}, 
-			"RHEL-6.1": {
-				"32": "rhel61-i386-cfntools", 
-				"64": "rhel61-x86_64-cfntools"
-			}, 
-			"RHEL-6.2": {
-				"32": "rhel62-i386-cfntools", 
-				"64": "rhel62-x86_64-cfntools"
-			}, 
-			"RHEL-6.3": {
-				"32": "rhel63-i386-cfntools", 
-				"64": "rhel63-x86_64-cfntools"
-			}, 
-			"SL6": {
-				"32": "NOT IMPLEMENTED", 
-				"64": "SL-6.4-x86_64-cfntools"
-			}, 
-			"U10": {
-				"32": "U10-i386-cfntools", 
-				"64": "U10-x86_64-cfntools"
-			}
-		}
-	}, 
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "ElasticSearch Base Cluster",
+        "Mappings": {
+                "AWSInstanceType2Arch": {
+                        "m1.large": {
+                                "Arch": "64"
+                        },
+                        "m1.medium": {
+                                "Arch": "64"
+                        },
+                        "m1.small": {
+                                "Arch": "64"
+                        },
+                        "m1.xlarge": {
+                                "Arch": "64"
+                        },
+                        "m1.2xlarge": {
+                                "Arch": "64"
+                        }
+                },
+                "DistroArch2AMI": {
+                        "RHEL-6.5": {
+                                "32": "NOT IMPLEMENTED",
+                                "64": "rhel-guest-image-6.5-20140411.0.x86_64"
+                        },
+                        "CENTOS-6.5": {
+                                "32": "NOT IMPLEMENTED",
+                                "64": "centos-6.5-20140117.0"
+                        }
+                }
+        },
 	"Outputs": {
 		"MasterSvr1": {
 			"Description": "public DNS name of the ElasticSearch master server 1", 
@@ -141,15 +121,10 @@
 		}, 
 		"InstanceType": {
 			"AllowedValues": [
-				"m1.tiny", 
 				"m1.small", 
 				"m1.large", 
 				"m1.xlarge", 
-				"m2.xlarge", 
-				"m2.2xlarge", 
-				"m2.4xlarge", 
-				"c1.xlarge", 
-				"cc1.4xlarge"
+				"m1.2xlarge" 
 			], 
 			"Default": "m1.tiny", 
 			"Description": "EC2 instance type (e.g. m1.large, m1.xlarge, m2.xlarge)", 
@@ -165,15 +140,10 @@
 		}, 
 		"LinuxDistribution": {
 			"AllowedValues": [
-				"SL6", 
-				"F18", 
-				"F17", 
-				"U10", 
-				"RHEL-6.1", 
-				"RHEL-6.2", 
-				"RHEL-6.3"
+				"RHEL-6.5", 
+				"CENTOS-6.5"
 			], 
-			"Default": "SL6", 
+			"Default": "CENTOS-6.5", 
 			"Description": "Distribution of choice", 
 			"Type": "String"
 		}, 
