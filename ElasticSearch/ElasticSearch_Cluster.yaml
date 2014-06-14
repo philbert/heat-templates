@@ -118,6 +118,12 @@ resources:
         pool_id: { get_resource: LB-pool }
         protocol_port: 80
 
+  LB-floating-ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network_id: { get_param: public_net_id }
+      port_id: { get_attr: [LB-pool, vip, port_id] }
+
   es_search_nodes:
     type: "OS::Heat::ResourceGroup"
     properties:
@@ -163,3 +169,7 @@ outputs:
   es_lb_port:
     value: { get_attr: [LB-pool, vip, port_id] }
     description: "Loadbalancer port id"
+
+  es_lb_public_ip:
+    value: { get_resource: [LB-floating-ip] }
+    description: "Loadbalancer public ip"
