@@ -65,7 +65,7 @@ parameters:
     description: Name of an existing KeyPair to enable SSH access
     type: string
 
-  imagename:
+  image_name:
     description: Linux image name
     type: string
     default: centos-6.5-20140117.0
@@ -131,7 +131,7 @@ resources:
           key_name:          { get_param: key_name }
           private_net_id:    { get_param: private_net_id }
           private_subnet_id: { get_param: private_subnet_id }
-          imagename:         { get_param: imagename }
+          image_name:        { get_param: image_name }
 
   es_log_nodes:
     type: "OS::Heat::ResourceGroup"
@@ -145,7 +145,7 @@ resources:
           key_name:          { get_param: key_name }
           private_net_id:    { get_param: private_net_id }
           private_subnet_id: { get_param: private_subnet_id }
-          imagename:         { get_param: imagename }
+          image_name:        { get_param: image_name }
 
 outputs:
 
