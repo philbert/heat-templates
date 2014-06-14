@@ -76,6 +76,7 @@
 		},
 		"TemplateBaseUrl": {
 			"Description": "URL for templates", 
+			"Default": "https://raw.githubusercontent.com/elastx/heat-templates/master/ElasticSearch",
 			"Type": "String"
 		}, 
 		"PrimarySecurityGroup": {

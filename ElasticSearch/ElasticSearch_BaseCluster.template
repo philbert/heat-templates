@@ -134,6 +134,7 @@
 			"Type": "String"
 		}, 
 		"TemplateBaseUrl": {
+			"Default": "https://raw.githubusercontent.com/elastx/heat-templates/master/ElasticSearch", 
 			"Description": "URL for templates", 
 			"Type": "String"
 		}, 
