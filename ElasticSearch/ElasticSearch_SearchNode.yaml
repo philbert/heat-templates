@@ -22,7 +22,11 @@ parameters:
     type: string
 
   private_subnet_id:
-    description: cloud network id for intra-cluster communication
+    description: cloud subnet id for intra-cluster communication
+    type: string
+
+  public_net_id:
+    description: cloud public network id
     type: string
 
   image_name:
