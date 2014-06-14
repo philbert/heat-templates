@@ -148,9 +148,9 @@ resources:
 outputs:
 
   es_search_server_ips:
-    value: { get_attr: [es_search_nodes, es_server_ip] }
+    value: { get_attr: [es_search_nodes, es_private_ip] }
     description: "Elasticsearch search Server IPs"
 
   es_log_server_ips:
-    value: { get_attr: [es_log_nodes, es_server_ip] }
+    value: { get_attr: [es_log_nodes, es_private_ip] }
     description: "Elasticsearch log Server IPs"
