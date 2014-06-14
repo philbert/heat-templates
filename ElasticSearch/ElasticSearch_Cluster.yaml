@@ -162,7 +162,7 @@ resources:
           key_name:          { get_param: key_name }
           private_net_id:    { get_param: private_net_id }
           image_name:        { get_param: image_name }
-          security_group:    { get_resource: es-search-security-group }
+          security_group:    { get_resource: es_search_security_group }
 
   es_log_nodes:
     type: "OS::Heat::ResourceGroup"
@@ -178,7 +178,7 @@ resources:
           key_name:          { get_param: key_name }
           private_net_id:    { get_param: private_net_id }
           image_name:        { get_param: image_name }
-          security_group:    { get_resource: es-log-security-group }
+          security_group:    { get_resource: es_log_security_group }
 
 outputs:
 
