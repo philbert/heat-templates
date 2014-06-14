@@ -124,7 +124,7 @@ resources:
     properties:
       count: { get_param: es_node_count }
       resource_def:
-        type: https://raw.githubusercontent.com/elastx/heat-templates/master/ElasticSearch/ElasticSearch_DataNode.yaml
+        type: https://raw.githubusercontent.com/elastx/heat-templates/master/ElasticSearch/ElasticSearch_SearchNode.yaml
         properties:
           server_flavor:     { get_param: flavor_search }
           server_hostname:   { get_param: server_hostname_search }

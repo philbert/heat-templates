@@ -1,0 +1,43 @@
+heat_template_version: 2013-05-23
+
+description: |
+  This is a Heat template to deploy a single Linux server running elasticsearch.
+
+parameters:
+
+  server_flavor:
+    description: Flavor for Cloud Servers
+    type: string
+
+  server_hostname:
+    description: Hostname for the server.
+    type: string
+
+  ssh_keypair_name:
+    description: Nova keypair name for ssh access to the server
+    type: string
+
+  private_net_id:
+    description: cloud network id for intra-cluster communication
+    type: string
+
+  ssh_private_key:
+    description: private key to access the created servers
+    type: string
+
+resources:
+
+  es_server:
+    type: "OS::Nova::Server"
+    properties:
+      name:     { get_param: server_hostname }
+      flavor:   { get_param: server_flavor }
+      image:    { get_param: imagename }
+      key_name: { get_param: ssh_keypair_name }
+      networks:
+      - uuid: { get_param: private_net_id }
+
+outputs:
+
+  es_private_ip:
+    value: { get_attr: [es_server, first_address] }
