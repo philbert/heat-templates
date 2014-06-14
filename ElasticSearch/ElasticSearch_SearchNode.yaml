@@ -63,6 +63,20 @@ resources:
       floating_network_id: { get_param: public_net_id }
       port_id: { get_resource: es_server_port }
 
+  es_server_volume:
+    type: OS::Cinder::Volume
+    properties:
+      name: es_volume
+      size: 100
+      volume_type: vol-10000iops
+
+  es_server_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: es_server }
+      volume_id: { get_resource: es_server_volume }
+      mountpoint: /dev/vdb
+
 outputs:
 
   es_private_ip:
