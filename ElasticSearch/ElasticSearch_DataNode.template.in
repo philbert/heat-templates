@@ -147,7 +147,7 @@
 			"Type": "Number"
 		}, 
 		"VolumeSize": {
-			"Default": "40", 
+			"Default": "100", 
 			"Description": "Volume size for each EBS volume", 
 			"Type": "Number"
 		}
@@ -195,72 +195,6 @@
 			}, 
 			"Type": "OS::Cinder::Volume"
 		}, 
-		"ElasticSearchVolume2": {
-			"Properties": {
-				"availability_zone": {
-					"Ref": "AvailabilityZone"
-				}, 
-				"name": {
-					"Fn::Join": [
-						"",
-						[
-							{ "Ref": "ClusterName" },
-							"-",
-							{ "Ref": "DataNodeName" },
-							"-Volume2"
-						]
-					]
-				},
-				"size": {
-					"Ref": "VolumeSize"
-				}
-			}, 
-			"Type": "OS::Cinder::Volume"
-		}, 
-		"ElasticSearchVolume3": {
-			"Properties": {
-				"availability_zone": {
-					"Ref": "AvailabilityZone"
-				}, 
-				"name": {
-					"Fn::Join": [
-						"",
-						[
-							{ "Ref": "ClusterName" },
-							"-",
-							{ "Ref": "DataNodeName" },
-							"-Volume3"
-						]
-					]
-				},
-				"size": {
-					"Ref": "VolumeSize"
-				}
-			}, 
-			"Type": "OS::Cinder::Volume"
-		}, 
-		"ElasticSearchVolume4": {
-			"Properties": {
-				"availability_zone": {
-					"Ref": "AvailabilityZone"
-				}, 
-				"name": {
-					"Fn::Join": [
-						"",
-						[
-							{ "Ref": "ClusterName" },
-							"-",
-							{ "Ref": "DataNodeName" },
-							"-Volume4"
-						]
-					]
-				},
-				"size": {
-					"Ref": "VolumeSize"
-				}
-			}, 
-			"Type": "OS::Cinder::Volume"
-		}, 
 		"ElasticSearchVolumeMount1": {
 			"Properties": {
 				"Device": "/dev/vdb", 
@@ -269,42 +203,6 @@
 				}, 
 				"VolumeId": {
 					"Ref": "ElasticSearchVolume1"
-				}
-			}, 
-			"Type": "AWS::EC2::VolumeAttachment"
-		}, 
-		"ElasticSearchVolumeMount2": {
-			"Properties": {
-				"Device": "/dev/vdc", 
-				"InstanceId": {
-					"Ref": "DataNodeInstance"
-				}, 
-				"VolumeId": {
-					"Ref": "ElasticSearchVolume2"
-				}
-			}, 
-			"Type": "AWS::EC2::VolumeAttachment"
-		}, 
-		"ElasticSearchVolumeMount3": {
-			"Properties": {
-				"Device": "/dev/vdd", 
-				"InstanceId": {
-					"Ref": "DataNodeInstance"
-				}, 
-				"VolumeId": {
-					"Ref": "ElasticSearchVolume3"
-				}
-			}, 
-			"Type": "AWS::EC2::VolumeAttachment"
-		}, 
-		"ElasticSearchVolumeMount4": {
-			"Properties": {
-				"Device": "/dev/vde", 
-				"InstanceId": {
-					"Ref": "DataNodeInstance"
-				}, 
-				"VolumeId": {
-					"Ref": "ElasticSearchVolume4"
 				}
 			}, 
 			"Type": "AWS::EC2::VolumeAttachment"
@@ -335,7 +233,6 @@
 					"config": {
 						"packages": {
 							"yum": {
-								"mdadm": [], 
 								"sysstat": []
 							}
 						}
@@ -417,9 +314,6 @@
 								"/opt/aws/bin/cfn-init > /tmp/cfn-init.log 2>&1 || error_exit $(</tmp/cfn-init.log)\n", 
 								"## Waiting for EBS mounts to become available\n", 
 								"while [ ! -e /dev/vdb ]; do echo waiting for /dev/vdb to attach; sleep 10; done\n", 
-								"while [ ! -e /dev/vdc ]; do echo waiting for /dev/vdc to attach; sleep 10; done\n", 
-								"while [ ! -e /dev/vdd ]; do echo waiting for /dev/vdd to attach; sleep 10; done\n", 
-								"while [ ! -e /dev/vde ]; do echo waiting for /dev/vde to attach; sleep 10; done\n", 
 								"rpm -Uvh ",
 								{
 									"Fn::Join": [
@@ -434,19 +328,11 @@
 								},
 								" > /tmp/yum-elasticsearch.log 2>&1\n", 
 								"killall java\n", 
-								"## Create RAID10 and persist configuration\n", 
-								"mdadm --verbose --create /dev/md0 --level=10 --chunk=256 --raid-devices=4 /dev/vdb /dev/vdc /dev/vdd /dev/vde > /tmp/mdadm.log 2>&1\n", 
-								"echo '`mdadm --detail --scan`' | tee -a /etc/mdadm.conf\n", 
 								"## Set read-ahead on each device\n", 
-								"blockdev --setra 128 /dev/md0\n", 
 								"blockdev --setra 128 /dev/vdb\n", 
-								"blockdev --setra 128 /dev/vdc\n", 
-								"blockdev --setra 128 /dev/vdd\n", 
-								"blockdev --setra 128 /dev/vde\n", 
-								"## Create physical and logical volumes\n", 
-								"dd if=/dev/zero of=/dev/md0 bs=512 count=1\n", 
-								"pvcreate /dev/md0\n", 
-								"vgcreate vg0 /dev/md0\n", 
+								"## Create logical volumes\n", 
+								"pvcreate /dev/vdb\n", 
+								"vgcreate vg0 /dev/vdb\n", 
 								"lvcreate -l 80%vg -n data vg0\n", 
 								"lvcreate -l 10%vg -n log vg0\n", 
 								"lvcreate -l 10%vg -n journal vg0\n", 
