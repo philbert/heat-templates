@@ -48,6 +48,66 @@ resources:
       key_name: { get_param: key_name }
       networks:
         - port: { get_resource: es_server_port }
+     user_data: |
+       #!/bin/bash -v
+       service iptables stop
+       chkconfig iptables off
+       yum -y install lvm2 java-1.7.0-openjdk wget ntp
+       rpm -ivh https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.2.1.noarch.rpm > /tmp/yum-elasticsearch.log 2>&1
+       /sbin/chkconfig --add elasticsearch
+       /sbin/chkconfig ntpd on
+       service ntpd start
+       ## Waiting for EBS mounts to become available
+       while [ ! -e /dev/vdb ]; do echo waiting for /dev/vdb to attach; sleep 10; done
+       pvcreate /dev/vdb
+       vgcreate vg0 /dev/vdb
+       lvcreate -l 80%vg -n data vg0
+       lvcreate -l 10%vg -n log vg0
+       lvcreate -l 10%vg -n journal vg0
+       ## Create filesystems and mount point info
+       mke2fs -t ext4 -F /dev/vg0/data > /tmp/mke2fs1.log 2>&1
+       mke2fs -t ext4 -F /dev/vg0/log > /tmp/mke2fs2.log 2>&1
+       mke2fs -t ext4 -F /dev/vg0/journal > /tmp/mke2fs3.log 2>&1
+       mkdir /data
+       mkdir /log
+       mkdir /journal
+       echo '/dev/vg0/data /data ext4 defaults,auto,noatime,noexec 0 0' | tee -a /etc/fstab
+       echo '/dev/vg0/log /log ext4 defaults,auto,noatime,noexec 0 0' | tee -a /etc/fstab
+       echo '/dev/vg0/journal /journal ext4 defaults,auto,noatime,noexec 0 0' | tee -a /etc/fstab
+       mount /data > /tmp/mount1.log 2>&1
+       mount /log > /tmp/mount2.log 2>&1
+       mount /journal > /tmp/mount3.log 2>&1
+       ln -s /journal /data/journal
+       chown -R elasticsearch:elasticsearch /data > /tmp/chown1.log 2>&1
+       chown -R elasticsearch:elasticsearch /log > /tmp/chown2.log 2>&1
+       chown -R elasticsearch:elasticsearch /journal > /tmp/chown3.log 2>&1 
+       ## Update elasticsearch configuration
+       cat <<EOF >> /etc/elasticsearch/elasticsearch.yml
+       path.data: /data
+       path.work: /journal
+       path.log: /log
+       node.master: true
+       node.data: true
+       discovery.zen.minimum_master_nodes: 2
+       discovery.zen.ping.multicast.enabled: true
+       EOF
+       service elasticsearch start > /tmp/elasticsearch-start.log 2>&1
+       cd /root
+       wget http://download.eclipse.org/jetty/9.2.1.v20140609/dist/jetty-distribution-9.2.1.v20140609.tar.gz
+       mkdir -p /opt/jetty
+       mkdir -p /opt/web/mybase/webapps
+       cd /opt/jetty
+       tar xzvf /root/jetty-distribution-9.2.1.v20140609.tar.gz
+       echo JETTY_HOME=/opt/jetty/jetty-distribution-9.2.1.v20140609 > /etc/default/jetty
+       echo "JETTY_BASE=/opt/web/mybase" >> /etc/default/jetty
+       echo "TMPDIR=/opt/jetty/temp" >> /etc/default/jetty
+       echo "JETTY_ARGS=jetty.port=80" >> /etc/default/jetty
+       cp /opt/jetty/jetty-distribution-9.2.1.v20140609/bin/jetty.sh /etc/init.d/jetty
+       /sbin/chkconfig --add jetty
+       cd /opt/web/mybase/
+       java -jar /opt/jetty/jetty-distribution-9.2.1.v20140609/start.jar --add-to-start=deploy,http,logging
+       sed -i 's/^jetty.port.*/jetty.port=80/' /opt/web/mybase/start.ini
+       service jetty start
 
   es_server_port:
     type: OS::Neutron::Port
