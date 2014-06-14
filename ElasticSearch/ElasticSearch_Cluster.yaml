@@ -130,7 +130,6 @@ resources:
           server_hostname:   { get_param: server_hostname_search }
           key_name:          { get_param: key_name }
           private_net_id:    { get_param: private_net_id }
-          private_subnet_id: { get_param: private_subnet_id }
           image_name:        { get_param: image_name }
 
   es_log_nodes:
@@ -144,7 +143,6 @@ resources:
           server_hostname:   { get_param: server_hostname_log }
           key_name:          { get_param: key_name }
           private_net_id:    { get_param: private_net_id }
-          private_subnet_id: { get_param: private_subnet_id }
           image_name:        { get_param: image_name }
 
 outputs:
