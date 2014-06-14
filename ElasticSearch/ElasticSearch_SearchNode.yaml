@@ -21,6 +21,10 @@ parameters:
     description: cloud network id for intra-cluster communication
     type: string
 
+  private_subnet_id:
+    description: cloud network id for intra-cluster communication
+    type: string
+
   image_name:
     description: Linux image name
     type: string
