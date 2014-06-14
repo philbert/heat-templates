@@ -1,0 +1,4 @@
+Template to install an ElasticSearch cluster and a ElasticSearch log node.
+
+Usage:
+heat stack-create --template-url https://raw.githubusercontent.com/elastx/heat-templates/master/ElasticSearch/ElasticSearch_Cluster.yaml es-test -P key_name=my-keypair
