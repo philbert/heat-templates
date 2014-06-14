@@ -124,6 +124,32 @@ resources:
       floating_network_id: { get_param: public_net_id }
       port_id: { get_attr: [LB-pool, vip, port_id] }
 
+  es_search_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: Add security group rules for server
+      name: es-search-security-group
+      rules:
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: tcp
+          port_range_min: 22
+          port_range_max: 22
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: icmp
+
+  es_log_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: Add security group rules for server
+      name: es-log-security-group
+      rules:
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: tcp
+          port_range_min: 22
+          port_range_max: 22
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: icmp
+
   es_search_nodes:
     type: "OS::Heat::ResourceGroup"
     properties:
@@ -136,6 +162,7 @@ resources:
           key_name:          { get_param: key_name }
           private_net_id:    { get_param: private_net_id }
           image_name:        { get_param: image_name }
+          security_group:    es-search-security-group
 
   es_log_nodes:
     type: "OS::Heat::ResourceGroup"
@@ -151,11 +178,16 @@ resources:
           key_name:          { get_param: key_name }
           private_net_id:    { get_param: private_net_id }
           image_name:        { get_param: image_name }
+          security_group:    es-log-security-group
 
 outputs:
 
   es_search_server_ips:
     value: { get_attr: [es_search_nodes, es_private_ip] }
+    description: "Elasticsearch search Server IPs"
+
+  es_search_server_ips_new:
+    value: { get_attr: [es_search_nodes, es_private_ip_new] }
     description: "Elasticsearch search Server IPs"
 
   es_search_server_ports:
@@ -169,7 +201,3 @@ outputs:
   es_lb_port:
     value: { get_attr: [LB-pool, vip, port_id] }
     description: "Loadbalancer port id"
-
-  es_lb_public_ip:
-    value: { get_resource: [LB-floating-ip] }
-    description: "Loadbalancer public ip"
