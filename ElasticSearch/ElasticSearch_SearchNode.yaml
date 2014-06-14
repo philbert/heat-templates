@@ -43,4 +43,4 @@ outputs:
     value: { get_attr: [es_server, first_address] }
 
   es_port_id:
-    value: { get_attr: [es_server, port_id] }
+    value: { get_attr: [es_server, addresses] }
