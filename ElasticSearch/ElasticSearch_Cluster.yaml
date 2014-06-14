@@ -114,7 +114,7 @@ resources:
       depends_on:
         - es_search_nodes
       properties:
-        members: { get_attr: [es_search_nodes, es_private_ip] }
+        members: { get_attr: [es_search_nodes, es_port_id] }
         pool_id: { get_resource: LB-pool }
         protocol_port: 80
 
@@ -130,6 +130,12 @@ resources:
       description: Add security group rules for server
       name: es-search-security-group
       rules:
+        - remote_group_id:
+        - remote_group_id: { get_resource: es_log_security_group }
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: tcp
+          port_range_min: 80
+          port_range_max: 80
         - remote_ip_prefix: 0.0.0.0/0
           protocol: tcp
           port_range_min: 22
@@ -143,6 +149,12 @@ resources:
       description: Add security group rules for server
       name: es-log-security-group
       rules:
+        - remote_group_id:
+        - remote_group_id: { get_resource: es_search_security_group }
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: tcp
+          port_range_min: 80
+          port_range_max: 80
         - remote_ip_prefix: 0.0.0.0/0
           protocol: tcp
           port_range_min: 22
