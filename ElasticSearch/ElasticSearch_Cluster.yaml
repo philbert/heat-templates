@@ -74,19 +74,19 @@ parameters:
     type: string
     label: Public network ID
     description: ID of public network
-    default: 02b72012-15ad-47f7-87f8-f45c01ca0601
+    default: 62954df1-05bb-42e5-9960-ca921cccaeeb
 
   private_net_id:
     label: Private network ID
     type: string
     description: ID of private network into which servers get deployed
-    default: f8bbaf00-1117-4e97-85d8-fbced2b3663b
+    default: 439d2ca2-d72b-43a9-876a-67cb4a6ad4a0
 
   private_subnet_id:
     label: Private subnet ID
     type: string
     description: ID of private sub network into which servers get deployed
-    default: a5a33037-06eb-469d-a451-3b8bc96bdb97
+    default: 9c77493c-93a2-458c-b4ea-1ccb2cd6a185
 
 
 resources:
