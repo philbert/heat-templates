@@ -114,8 +114,7 @@ resources:
       depends_on:
         - es_search_nodes
       properties:
-        members:
-        - addresses: { get_attr: [es_search_nodes, es_private_ip] }
+        members: { get_attr: [es_search_nodes, es_private_ip] }
         pool_id: { get_resource: LB-pool }
         protocol_port: 80
 
@@ -134,6 +133,8 @@ resources:
 
   es_log_nodes:
     type: "OS::Heat::ResourceGroup"
+    depends_on:
+      - es_search_nodes
     properties:
       count: 1
       resource_def:
@@ -151,6 +152,14 @@ outputs:
     value: { get_attr: [es_search_nodes, es_private_ip] }
     description: "Elasticsearch search Server IPs"
 
+  es_search_server_ports:
+    value: { get_attr: [es_search_nodes, es_port_id] }
+    description: "Elasticsearch search Server ports"
+
   es_log_server_ips:
     value: { get_attr: [es_log_nodes, es_private_ip] }
     description: "Elasticsearch log Server IPs"
+
+  es_lb_port:
+    value: { get_attr: [LB-pool, vip, port_id] }
+    description: "Loadbalancer port id"
