@@ -68,8 +68,5 @@ outputs:
   es_private_ip:
     value: { get_attr: [es_server, first_address] }
 
-  es_private_ip_new:
-    value: { get_attr: [es_server, networks, { get_param: private_net_id }, 0] }
-
   es_port_id:
     value: { get_resource: [es_server_port] }

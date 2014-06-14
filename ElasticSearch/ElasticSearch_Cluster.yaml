@@ -190,10 +190,6 @@ outputs:
     value: { get_attr: [es_search_nodes, es_private_ip] }
     description: "Elasticsearch search Server IPs"
 
-  es_search_server_ips_new:
-    value: { get_attr: [es_search_nodes, es_private_ip_new] }
-    description: "Elasticsearch search Server IPs"
-
   es_search_server_ports:
     value: { get_attr: [es_search_nodes, es_port_id] }
     description: "Elasticsearch search Server ports"
