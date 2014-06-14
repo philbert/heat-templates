@@ -48,7 +48,7 @@ resources:
       key_name: { get_param: key_name }
       networks:
         - port: { get_resource: es_server_port }
-     user_data: |
+      user_data: |
        #!/bin/bash -v
        service iptables stop
        chkconfig iptables off
