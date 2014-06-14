@@ -69,4 +69,4 @@ outputs:
     value: { get_attr: [es_server, first_address] }
 
   es_port_id:
-    value: { get_resource: [es_server_port] }
+    value: { get_attr: [es_server_port, device_id] }
