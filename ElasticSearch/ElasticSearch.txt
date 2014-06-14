@@ -24,3 +24,23 @@ Dashboard either due to different, but similar limitation.
 
 It may be done via the command line as follows:
 neutron lb-member-create --address <RouterStack.Output.MemberName> --protocol-port 9200 <BaseStack.Output.LoadBalancerId>
+
+
+This is an example setup procedure
+
+1.
+heat stack-create es-test --template-url https://raw.githubusercontent.com/elastx/heat-templates/master/ElasticSearch/ElasticSearch_BaseCluster.template -P KeyName=my-keypair -P PrimaryNetworkId=439d2ca2-d72b-43a9-876a-67cb4a6ad4a0
+
+2.
+Add floating IP to one of the nodes.
+
+3.
+heat stack-create --template-url http://88.80.174.24/ElasticSearch_DataNode.template DataNode1 -P DataNodeName=Master1
+
+
+Template TODO:
+1. Disable local firewall
+service iptables stop
+chkconfig iptables off
+
+2. 
