@@ -115,7 +115,7 @@ resources:
         - es_search_nodes
       properties:
         members:
-        - addresses: { get_attr: [es_nodes, es_private_ip] }
+        - addresses: { get_attr: [es_search_nodes, es_private_ip] }
         pool_id: { get_resource: LB-pool }
         protocol_port: 80
 
