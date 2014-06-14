@@ -59,7 +59,7 @@ parameters:
   es_node_count:
     description: Number of nodes to create
     type: number
-    default: 3
+    default: 2
 
   keyname:
     description: Name of an existing KeyPair to enable SSH access
@@ -94,7 +94,7 @@ resources:
   LB-monitor:
       type: OS::Neutron::HealthMonitor
       properties:
-        type: PING
+        type: HTTP
         delay: 3
         max_retries: 5
         timeout: 10
@@ -107,7 +107,7 @@ resources:
         subnet_id: { get_param: private_subnet_id }
         lb_method: LEAST_CONNECTIONS
         monitors: [ { get_resource: LB-monitor } ]
-        vip: {"address": 192.168.123.200, "protocol_port": 80}
+        vip: {"protocol_port": 80}
 
   LB:
       type: OS::Neutron::LoadBalancer
@@ -126,11 +126,12 @@ resources:
       resource_def:
         type: https://raw.githubusercontent.com/elastx/heat-templates/master/ElasticSearch/ElasticSearch_DataNode.yaml
         properties:
-          server_flavor:    { get_param: flavor_search }
-          server_hostname:  { get_param: server_hostname_search }
-          ssh_keypair_name: { get_param: keyname }
-          private_net_id:   { get_param: private_net_id }
-          private_subnet_id:   { get_param: private_subnet_id }
+          server_flavor:     { get_param: flavor_search }
+          server_hostname:   { get_param: server_hostname_search }
+          ssh_keypair_name:  { get_param: keyname }
+          private_net_id:    { get_param: private_net_id }
+          private_subnet_id: { get_param: private_subnet_id }
+          imagename:         { get_param: imagename }
 
   es_log_nodes:
     type: "OS::Heat::ResourceGroup"
@@ -139,11 +140,12 @@ resources:
       resource_def:
         type: https://raw.githubusercontent.com/elastx/heat-templates/master/ElasticSearch/ElasticSearch_LogNode.yaml
         properties:
-          server_flavor:    { get_param: flavor_log }
-          server_hostname:  { get_param: server_hostname_log }
-          ssh_keypair_name: { get_param: keyname }
-          private_net_id:   { get_param: private_net_id }
-          private_subnet_id:   { get_param: private_subnet_id }
+          server_flavor:     { get_param: flavor_log }
+          server_hostname:   { get_param: server_hostname_log }
+          ssh_keypair_name:  { get_param: keyname }
+          private_net_id:    { get_param: private_net_id }
+          private_subnet_id: { get_param: private_subnet_id }
+          imagename:         { get_param: imagename }
 
 outputs:
 
