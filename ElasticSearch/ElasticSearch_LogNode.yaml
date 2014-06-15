@@ -50,6 +50,7 @@ resources:
         - port: { get_resource: es_server_port }
       user_data: |
        #!/bin/bash -v
+       ln -s -f /usr/share/zoneinfo/CET /etc/localtime
        service iptables stop
        chkconfig iptables off
        yum -y install lvm2 java-1.7.0-openjdk wget ntp

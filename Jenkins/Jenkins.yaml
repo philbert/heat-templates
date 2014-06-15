@@ -92,6 +92,7 @@ resources:
         - port: { get_resource: server_port }
       user_data: |
        #!/bin/bash -v
+       ln -s -f /usr/share/zoneinfo/CET /etc/localtime
        service iptables stop
        chkconfig iptables off
        yum -y install java-1.7.0-openjdk wget ntp
