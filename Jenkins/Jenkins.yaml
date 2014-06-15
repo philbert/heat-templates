@@ -1,0 +1,122 @@
+heat_template_version: 2013-05-23
+
+description: |
+  This is a Heat template to deploy an elasticsearch cluster on the
+  Elastx ops:IaaS.
+
+parameter_groups:
+
+- label: Server Settings
+  parameters:
+  - server_hostname_search
+  - server_hostname_log
+  - flavor_search
+  - flavor_log
+  - es_node_count
+
+parameters:
+
+  flavor:
+    description: Elastx Cloud Server flavor for search node
+    type: string
+    default: m1.medium
+    constraints:
+    - allowed_values:
+      - m1.small
+      - m1.medium
+      - m1.large
+      - m1.xlarge
+      - m1.2xlarge
+      description: |
+        Must be a valid Elastx Cloud Server flavor for the region you have
+        selected to deploy into.
+
+  server_hostname:
+    description: Hostname for the servers
+    type: string
+    default: es-jenkins
+
+  key_name:
+    description: Name of an existing KeyPair to enable SSH access
+    type: string
+
+  image_name:
+    description: Linux image name
+    type: string
+    default: centos-6.5-20140117.0
+
+  public_net_id:
+    type: string
+    label: Public network ID
+    description: ID of public network
+    default: 62954df1-05bb-42e5-9960-ca921cccaeeb
+
+  private_net_id:
+    label: Private network ID
+    type: string
+    description: ID of private network into which servers get deployed
+    default: 439d2ca2-d72b-43a9-876a-67cb4a6ad4a0
+
+  private_subnet_id:
+    label: Private subnet ID
+    type: string
+    description: ID of private sub network into which servers get deployed
+    default: 9c77493c-93a2-458c-b4ea-1ccb2cd6a185
+
+
+resources:
+
+  security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: Add security group rules for server
+      name: jenkins-security-group
+      rules:
+        - remote_mode: remote_group_id 
+          remote_group_id:
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: tcp
+          port_range_min: 80
+          port_range_max: 80
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: tcp
+          port_range_min: 22
+          port_range_max: 22
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: icmp
+
+  server:
+    type: "OS::Nova::Server"
+    properties:
+      name:     { get_param: server_hostname }
+      flavor:   { get_param: server_flavor }
+      image:    { get_param: image_name }
+      key_name: { get_param: key_name }
+      networks:
+        - port: { get_resource: server_port }
+      user_data: |
+       #!/bin/bash -v
+       service iptables stop
+       chkconfig iptables off
+       yum -y install java-1.7.0-openjdk wget ntp
+       /sbin/chkconfig ntpd on
+       service ntpd start
+
+  server_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: private_net_id }
+      fixed_ips:
+        - subnet_id: { get_param: private_subnet_id }
+      security_groups: [{ get_resource: security_group }]
+
+  server_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network_id: { get_param: public_net_id }
+      port_id: { get_resource: server_port }
+
+outputs:
+
+  es_private_ip:
+    value: { get_attr: [es_server, first_address] }
