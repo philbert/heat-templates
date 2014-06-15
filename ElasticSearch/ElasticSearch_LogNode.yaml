@@ -94,14 +94,13 @@ resources:
        service elasticsearch start > /tmp/elasticsearch-start.log 2>&1
        cd /root
        wget http://download.eclipse.org/jetty/9.2.1.v20140609/dist/jetty-distribution-9.2.1.v20140609.tar.gz
-       mkdir -p /opt/jetty
+       mkdir -p /opt/jetty/temp
        mkdir -p /opt/web/mybase/webapps
        cd /opt/jetty
        tar xzvf /root/jetty-distribution-9.2.1.v20140609.tar.gz
        echo JETTY_HOME=/opt/jetty/jetty-distribution-9.2.1.v20140609 > /etc/default/jetty
        echo "JETTY_BASE=/opt/web/mybase" >> /etc/default/jetty
        echo "TMPDIR=/opt/jetty/temp" >> /etc/default/jetty
-       echo "JETTY_ARGS=jetty.port=80" >> /etc/default/jetty
        cp /opt/jetty/jetty-distribution-9.2.1.v20140609/bin/jetty.sh /etc/init.d/jetty
        /sbin/chkconfig --add jetty
        cd /opt/web/mybase/
