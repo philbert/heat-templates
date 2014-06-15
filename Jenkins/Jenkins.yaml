@@ -1,23 +1,19 @@
 heat_template_version: 2013-05-23
 
 description: |
-  This is a Heat template to deploy an elasticsearch cluster on the
-  Elastx ops:IaaS.
+  This is a Heat template to deploy an Jenkins node on Elastx ops:IaaS.
 
 parameter_groups:
 
 - label: Server Settings
   parameters:
-  - server_hostname_search
-  - server_hostname_log
-  - flavor_search
-  - flavor_log
-  - es_node_count
+  - server_hostname
+  - flavor
 
 parameters:
 
   flavor:
-    description: Elastx Cloud Server flavor for search node
+    description: Elastx Cloud Server flavor
     type: string
     default: m1.medium
     constraints:
@@ -101,6 +97,11 @@ resources:
        yum -y install java-1.7.0-openjdk wget ntp
        /sbin/chkconfig ntpd on
        service ntpd start
+       wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+       rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
+       yum -y install jenkins
+       /sbin/chkconfig jenkins on
+       service jenkins start
 
   server_port:
     type: OS::Neutron::Port
